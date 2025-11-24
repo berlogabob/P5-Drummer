@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>p5.js Layered Sketches – SINGLE FILE VERSION</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+                background: #000;
+            }
+            canvas {
+                position: fixed;
+                top: 0;
+                left: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Everything is in this one file – no external .js needed -->
+
+        <script>
+            // ==================== BACKGROUND LAYER ====================
+            new p5((p) => {
+                let stars = [];
+
+                p.setup = () => {
+                    p.createCanvas(p.windowWidth, p.windowHeight);
+                    for (let i = 0; i < 400; i++) {
+                        stars.push({
+                            x: p.random(p.width),
+                            y: p.random(p.height),
+                            size: p.random(1, 4),
+                            speed: p.random(0.3, 1.5),
+                        });
+                    }
+                };
+
+                p.draw = () => {
+                    p.background(0, 0, 50);
+                    p.noStroke();
+                    p.fill(255, 220);
+                    stars.forEach((s) => {
+                        p.circle(s.x, s.y, s.size);
+                        s.y += s.speed;
+                        if (s.y > p.height) s.y = 0;
+                    });
+                };
+
+                p.windowResized = () =>
+                    p.resizeCanvas(p.windowWidth, p.windowHeight);
+            }); // ← background instance ends here
+        </script>
+
+        <script>
+            // ==================== DASHBOARD OVERLAY LAYER ====================
+            new p5((p) => {
+                p.setup = () => {
+                    p.createCanvas(p.windowWidth, p.windowHeight);
+                    p.textFont("monospace");
+                };
+
+                p.draw = () => {
+                    p.clear(); // ← THIS makes the dashboard transparent!
+
+                    p.fill(255, 240);
+                    p.noStroke();
+                    p.textAlign(p.LEFT, p.TOP);
+                    p.textSize(16);
+                    p.text(`FPS: ${p.frameRate().toFixed(1)}`, 20, 20);
+                    p.text(`Mouse: ${p.mouseX} × ${p.mouseY}`, 20, 50);
+                    p.text(`Press any key → see console`, 20, 80);
+
+                    // Example health/energy bar
+                    p.fill(0, 180);
+                    p.rect(20, 130, 340, 40, 12);
+                    p.fill(0, 255, 140);
+                    p.rect(
+                        25,
+                        135,
+                        p.map(p.sin(p.frameCount * 0.03), -1, 1, 0, 330),
+                        30,
+                        8,
+                    );
+                };
+
+                // Global keyboard works here (you can later merge with ESP32 data)
+                p.keyPressed = () => {
+                    console.log("KEY PRESSED →", p.key, p.keyCode);
+                    // Here you will later receive piezo hits from ESP32
+                };
+
+                p.windowResized = () =>
+                    p.resizeCanvas(p.windowWidth, p.windowHeight);
+            }); // ← dashboard instance ends here
+        </script>
+
+        <h1
+            style="
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                color: #0f0;
+                font-family: monospace;
+                pointer-events: none;
+            "
+        >
+            ONE FILE • TWO LAYERS • DEBUG BY COMMENTING ONE SCRIPT BLOCK 🥁
+        </h1>
+    </body>
+</html>
