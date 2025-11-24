@@ -4,8 +4,8 @@ let baseSize = 960; //original background size
 let CSX = baseSize * globalScale;
 let CSY = baseSize * globalScale;
 
-let drumScale = 0.5; // extra drum-only scale (still works!)
-let drumsetX = 100; // offset from center (in original 960 units)
+let drumScale = 0.5; // drum-only scale
+let drumsetX = 100; // offset from center (original 960 units)
 let drumsetY = 120;
 
 let bgImg;
@@ -43,12 +43,12 @@ function setup() {
 function draw() {
   background(0);
 
-  // ONE SINGLE push/pop that scales EVERYTHING perfectly
+  // push/pop that scales everything
   push();
   translate(width / 2, height / 2); // go to center of current canvas
-  scale(globalScale); // ← THIS SCALES ALL OBJECTS EXACTLY LIKE CANVAS
+  scale(globalScale); //
 
-  // Background — now scales perfectly with canvas
+  // Background (scales with canvas)
   image(bgImg, 0, 0, baseSize, baseSize);
 
   // Drumset — position + extra drumScale
